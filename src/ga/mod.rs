@@ -4,6 +4,7 @@ use crate::city::TOTAL_CITIES;
 // use crate::tour::Tour;
 use crate::cycle::Cycle;
 use crate::city::Map;
+use crate::fitness::fitness;
 
 use std::collections::hash_map::Entry;
 use std::hash::Hash;
@@ -56,22 +57,22 @@ T: GeneticCustom + Eq + Hash
         // println!("{:?}", population);
 
         let mut x: Vec<f64> = Vec::new();        
+        let boltzmann_params = Boltzmann {
+            distribution: None,
+            t_coefficient: 1f64,
+            f_max: 1f64,
+            generation: i as f64,
+            max_generation: params.rounds as f64,
+        };
         
         for item in &population {
-            x.push(calc_fitness(item, fitness, cache, towns_map));
+            x.push(boltzmann_fit(item, fitness, cache, towns_map, &boltzmann_params));
         }
 
         // println!("{:?}", x);
 
 
         let dist = WeightedIndex::new(x).unwrap();
-        // let boltzmann_params = Boltzmann {
-        //     distribution: None,
-        //     t_coefficient: 1f64,
-        //     f_max: 1f64,
-        //     generation: i as f64,
-        //     max_generation: params.rounds as f64,
-        // };
 
         // let std_weighted = StandardWeighted{
         //     distribution: None
@@ -124,5 +125,37 @@ pub fn calc_fitness<T>(
             Entry::Vacant(entry) => *entry.insert(fitness(item, towns_map)),
             Entry::Occupied(entry) => *entry.get()
         }
+
+}
+
+fn boltzmann_fit<T>(item: &Rc<T>,
+    fitness: &Box<dyn Fn(&T, &Map) -> f64>
+    , cache: &mut GenHash<T>   
+    , towns_map: &Map
+    , params: &Boltzmann
+) -> f64
+where
+    T: Hash + Eq
+{
+    match cache.entry(item.clone()) {
+        Entry::Vacant(entry) => *entry.insert(boltzmann_probability(item, fitness, towns_map, params)),
+        Entry::Occupied(entry) => *entry.get()
+    }
+
+}
+
+fn boltzmann_probability<T> (x: &Rc<T>,
+    fitness: &Box<dyn Fn(&T, &Map) -> f64>,
+    towns_map: &Map,
+    params: &Boltzmann) -> f64 
+where
+{
+    f64::exp(-((params.f_max - fitness(x, towns_map)))/get_t_boltzmann(params))
+
+}
+
+fn get_t_boltzmann(params: &Boltzmann) -> f64 {
+
+    (params.t_coefficient).powf((1f64 + 100f64*params.generation) / params.max_generation)
 
 }

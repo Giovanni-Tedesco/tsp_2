@@ -67,7 +67,8 @@ impl Cycle {
 impl GeneticCustom for Cycle {
     fn mutate_step(&self, other: &Self, params: &genetic::AlgorithmParams) -> (Self, Self) where Self: Sized {
        let (child_1, child_2) = self.cross_over(other, params.co_factor);
-
+        // let child_1 = self.clone();
+        // let child_2 = other.clone();
 
         let mutated_child_1 = child_1.mutate(params.mutation_rate);
         let mutated_child_2 = child_2.mutate(params.mutation_rate);

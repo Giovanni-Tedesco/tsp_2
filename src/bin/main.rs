@@ -26,10 +26,10 @@ fn main() {
     // println!("Path vec: {:?}", x.path);
 
     let params = AlgorithmParams {
-        rounds: 10000,
-        max_popuation: 300,
+        rounds: 500000,
+        max_popuation: 12,
         mutation_rate: 0.05,
-        co_factor: 0.5,
+        co_factor: 0.05,
         elitism: 10,
     };
 
