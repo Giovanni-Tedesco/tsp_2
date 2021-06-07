@@ -48,7 +48,7 @@ fn main() {
     // println!("{:?}", x2.tour.len());
 
 
-
+    
     // initial_population.push(
     //     Rc::new(Tour::generate_random(&cities_map))
     // );
@@ -78,21 +78,24 @@ fn main() {
     // let y = town_map.get(&1).unwrap();
 
     // println!("{:?}", x.distance(y));
+    
+    // This is the solution cycle / the cycle that will give the shortest distance.
+    // Uncomment to calculate the shortest distance.
+    /* let temp_vec: Vec<f64> = Vec::new();
+    let mut something: Vec<usize> = vec![1,8,38,31,44,18,7,28,6,37,19,27,17,43,30,36,46,33,20,47,21,32,39,48,5,42,24,10,45,35,4,26,2,29,34,41,16,22,3,23,14,25,13,11,12,15,40,9];
 
-    // let temp_vec: Vec<f64> = Vec::new();
-    // let mut something: Vec<usize> = vec![1,8,38,31,44,18,7,28,6,37,19,27,17,43,30,36,46,33,20,47,21,32,39,48,5,42,24,10,45,35,4,26,2,29,34,41,16,22,3,23,14,25,13,11,12,15,40,9];
+    for i in 0..something.len() {
+         something[i] -= 1;
+    }
 
-    // for i in 0..something.len() {
-    //     something[i] -= 1;
-    // }
+    let test = Cycle {
+         path: something,
+         float_vec: temp_vec,
+    };
 
-    // let test = Cycle {
-    //     path: something,
-    //     float_vec: temp_vec,
-    // };
-
-    // println!("{:?}", fitness::tot_dist(&test, &town_map));
-    // println!("{:?}", fitness::fitness(&test, &town_map));
+     println!("{:?}", fitness::tot_dist(&test, &town_map));
+     println!("{:?}", fitness::fitness(&test, &town_map));
+    */
 
 
 }
