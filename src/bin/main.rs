@@ -26,17 +26,17 @@ fn main() {
     // println!("Path vec: {:?}", x.path);
 
     let params = AlgorithmParams {
-        rounds: 500000,
-        max_popuation: 12,
-        mutation_rate: 0.05,
-        co_factor: 0.05,
+        rounds: 1000,
+        max_popuation: 30,
+        mutation_rate: 0.5,
+        co_factor: 0.5,
         elitism: 10,
     };
 
     let mut cache: HashMap<Rc<Cycle>, f64> = HashMap::new();
     let mut initial_population: Vec<Rc<Cycle>> = Vec::new();
     let fitness: Box<dyn Fn(&Cycle, &Map) -> f64> = Box::new(fitness::fitness);
-
+    
     // println!("{:?}", t.tour.len());
     // println!("{:?}", t2.tour.len());
 
@@ -65,14 +65,11 @@ fn main() {
     .partial_cmp(&fitness::fitness(b, &town_map))
     .unwrap());
 
-
-    for item in x {
         // let x = item.start.number;
         println!("distance: {:?}, fitness: {:?}, cycle: {:?}"
-        , fitness::tot_dist(&item, &town_map)
-        , fitness::fitness(&item, &town_map)
-        , item.path);
-    }
+        , fitness::tot_dist(&x[x.len() - 1], &town_map)
+        , fitness::fitness(&x[x.len() - 1], &town_map)
+        , x[x.len() - 1].path);
 
     // let x = town_map.get(&0).unwrap();
     // let y = town_map.get(&1).unwrap();
@@ -101,8 +98,8 @@ fn main() {
 }
 
 fn get_map() -> Map {
-    let x: HashMap<usize, City> = hashmap!{
-    0 => City{x:6734f64, y:1453f64},
+    hashmap!{
+    0usize => City{x:6734f64, y:1453f64},
     1  => City{x:2233f64, y:10f64},
     2  => City{x:5530f64, y:1424f64},
     3  => City{x:401f64,  y:841f64},
@@ -150,8 +147,7 @@ fn get_map() -> Map {
     45 => City{x:6807f64, y:2993f64},
     46 => City{x:5185f64, y:3258f64},
     47 => City{x:3023f64, y:1942f64}
-    };
+    }
 
-    return x
 
 }

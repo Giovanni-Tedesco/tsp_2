@@ -4,6 +4,7 @@ use crate::city::TOTAL_CITIES;
 // use crate::tour::Tour;
 use crate::cycle::Cycle;
 use crate::city::Map;
+use crate::fitness;
 use crate::fitness::fitness;
 
 use std::collections::hash_map::Entry;
@@ -50,7 +51,13 @@ T: GeneticCustom + Eq + Hash
         initial_population.clone()
     };
 
+    println!("distance: {:?}, fitness: {:?}, cycle: {:?}"
+    , fitness::tot_dist(&population[0], &towns_map)
+    , fitness::fitness(&population[0], &towns_map)
+    , population[0].path);
+
     for i in 0..params.rounds {
+
 
         let mut rng = rand::thread_rng();
 
@@ -66,9 +73,12 @@ T: GeneticCustom + Eq + Hash
         };
         
         for item in &population {
-            x.push(boltzmann_fit(item, fitness, cache, towns_map, &boltzmann_params));
+            x.push(calc_fitness(item, fitness, cache, towns_map))
         }
 
+        population.sort_by(|a, b| fitness::fitness(b, &towns_map)
+        .partial_cmp(&fitness::fitness(a, &towns_map))
+        .unwrap());
         // println!("{:?}", x);
 
 
@@ -89,6 +99,8 @@ T: GeneticCustom + Eq + Hash
 
 
         let mut new_population: Vec<Rc<Cycle>> = Vec::new();
+
+        new_population.push(population[0].clone());
 
         while new_population.len() < params.max_popuation as usize {
             let parent_1 = &population[dist.sample(&mut rng)];

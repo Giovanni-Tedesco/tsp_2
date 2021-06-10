@@ -29,12 +29,24 @@ impl Cycle {
     pub fn mutate(&self, mutation_rate: f64) -> Self {
         let mut child = self.clone();
         let mut rng = rand::thread_rng();
-        let dice = Uniform::new(1, child.path.len());
+        let k = 1f64 / child.float_vec.len() as f64;
 
-        let pos_1 = dice.sample(&mut rng);
-        let pos_2 = dice.sample(&mut rng);
+        let dice = Uniform::new(-k, k);
 
-        child.path.swap(pos_1, pos_2);
+        // - 1 / k, + 1 / k
+        for i in &mut child.float_vec { 
+            let x: f64 = rng.gen();
+
+            if x < mutation_rate {
+                let z = dice.sample(&mut rng);
+                if *i + z > 0f64 && *i + z < 1f64 {
+                    *i += z
+                }
+            }
+        }
+
+        child.path = generate_path(&child.float_vec);
+
 
         return child;
 
