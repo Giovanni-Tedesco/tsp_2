@@ -26,11 +26,11 @@ fn main() {
     // println!("Path vec: {:?}", x.path);
 
     let params = AlgorithmParams {
-        rounds: 1000,
-        max_popuation: 30,
+        rounds: 10000,
+        max_popuation: 500,
         mutation_rate: 0.5,
         co_factor: 0.5,
-        elitism: 10,
+        elitism: 100,
     };
 
     let mut cache: HashMap<Rc<Cycle>, f64> = HashMap::new();
@@ -150,4 +150,19 @@ fn get_map() -> Map {
     }
 
 
+}
+
+fn get_map_2() -> Map {
+    hashmap!{
+    0 =>  City{x:0.4, y:0.4439},
+    1 =>  City{x: 0.2439, y: 0.1463},
+    2 =>  City{x: 0.1707, y: 0.2293},
+    3 =>  City{x: 0.2293, y: 0.761},
+    4 =>  City{x: 0.5171, y: 0.9414},
+    5 =>  City{x: 0.8732, y: 0.6536},
+    6 =>  City{x: 0.6878, y: 0.5219},
+    7 =>  City{x: 0.8488, y: 0.3609}, 
+    8 =>  City{x: 0.6683, y: 0.2536},
+    9 =>  City{x: 0.6195, y: 0.2634} 
+    }
 }

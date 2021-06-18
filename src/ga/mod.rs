@@ -1,11 +1,13 @@
 // use std::collections::BTreeMap;
 use crate::city::City;
 use crate::city::TOTAL_CITIES;
+use crate::distributions::annealed::Annealed;
 // use crate::tour::Tour;
 use crate::cycle::Cycle;
 use crate::city::Map;
 use crate::fitness;
 use crate::fitness::fitness;
+use crate::fitness::tot_dist;
 
 use std::collections::hash_map::Entry;
 use std::hash::Hash;
@@ -30,12 +32,13 @@ use genetic::GeneticCustom;
 
 
 pub type GenHash<T> = HashMap<Rc<T>, f64>;
+pub type FitFunc = Box<dyn Fn(&Cycle, &Map) -> f64>;
 
 
 pub fn genetic_algorithm<T>(
     initial_population: &Vec<Rc<Cycle>>,
     params: &AlgorithmParams,    
-    fitness: &Box<dyn Fn(&Cycle, &Map) -> f64>,
+    fitness: &FitFunc,
     cache: &mut GenHash<Cycle>,
     towns_map: &Map
 ) -> Vec<Rc<Cycle>> 
@@ -56,6 +59,8 @@ T: GeneticCustom + Eq + Hash
     , fitness::fitness(&population[0], &towns_map)
     , population[0].path);
 
+    let mut last_best = population[0].clone();
+
     for i in 0..params.rounds {
 
 
@@ -64,16 +69,10 @@ T: GeneticCustom + Eq + Hash
         // println!("{:?}", population);
 
         let mut x: Vec<f64> = Vec::new();        
-        let boltzmann_params = Boltzmann {
-            distribution: None,
-            t_coefficient: 1f64,
-            f_max: 1f64,
-            generation: i as f64,
-            max_generation: params.rounds as f64,
-        };
+
         
         for item in &population {
-            x.push(calc_fitness(item, fitness, cache, towns_map))
+            x.push(calc_fitness(item, fitness, cache, towns_map, &last_best))
         }
 
         population.sort_by(|a, b| fitness::fitness(b, &towns_map)
@@ -82,7 +81,8 @@ T: GeneticCustom + Eq + Hash
         // println!("{:?}", x);
 
 
-        let dist = WeightedIndex::new(x).unwrap();
+        // let dist = WeightedIndex::new(x).unwrap();
+        let dist = Annealed::new(&x);
 
         // let std_weighted = StandardWeighted{
         //     distribution: None
@@ -100,7 +100,13 @@ T: GeneticCustom + Eq + Hash
 
         let mut new_population: Vec<Rc<Cycle>> = Vec::new();
 
-        new_population.push(population[0].clone());
+        let ins = params.elitism.min(population.len());
+
+        for i in 0..ins {
+            new_population.push(population[i].clone());
+        }
+
+        last_best = population[0].clone();
 
         while new_population.len() < params.max_popuation as usize {
             let parent_1 = &population[dist.sample(&mut rng)];
@@ -124,15 +130,20 @@ T: GeneticCustom + Eq + Hash
 
 }
 
-pub fn calc_fitness<T>(
-        item: &Rc<T>,
-        fitness: &Box<dyn Fn(&T, &Map) -> f64>,
-        cache: &mut HashMap<Rc<T>, f64>,
-        towns_map: &Map
+pub fn calc_fitness (
+        item: &Rc<Cycle>,
+        fitness: &FitFunc,
+        cache: &mut HashMap<Rc<Cycle>, f64>,
+        towns_map: &Map,
+        last_best: &Cycle
     ) -> f64
     where
-        T: Hash + Eq
     {
+        let curr = fitness::tot_dist(item, towns_map);
+        let best = fitness::tot_dist(last_best, towns_map);
+
+        let fit = best / curr;
+
         match cache.entry(item.clone()) {
             Entry::Vacant(entry) => *entry.insert(fitness(item, towns_map)),
             Entry::Occupied(entry) => *entry.get()
@@ -140,9 +151,9 @@ pub fn calc_fitness<T>(
 
 }
 
-fn boltzmann_fit<T>(item: &Rc<T>,
-    fitness: &Box<dyn Fn(&T, &Map) -> f64>
-    , cache: &mut GenHash<T>   
+fn boltzmann_fit<T>(item: &Rc<Cycle>,
+    fitness: &FitFunc
+    , cache: &mut GenHash<Cycle>   
     , towns_map: &Map
     , params: &Boltzmann
 ) -> f64
@@ -156,8 +167,8 @@ where
 
 }
 
-fn boltzmann_probability<T> (x: &Rc<T>,
-    fitness: &Box<dyn Fn(&T, &Map) -> f64>,
+fn boltzmann_probability (x: &Rc<Cycle>,
+    fitness: &FitFunc,
     towns_map: &Map,
     params: &Boltzmann) -> f64 
 where

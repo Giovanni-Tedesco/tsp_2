@@ -4,6 +4,8 @@ use rand::{Rng, distributions::Uniform, prelude::Distribution};
 mod hash;
 mod eq;
 
+use crate::city::TOTAL_CITIES;
+
 use self::utils::{generate_floats, generate_path};
 
 
@@ -29,7 +31,7 @@ impl Cycle {
     pub fn mutate(&self, mutation_rate: f64) -> Self {
         let mut child = self.clone();
         let mut rng = rand::thread_rng();
-        let k = 1f64 / child.float_vec.len() as f64;
+        let k = 2f64 / child.float_vec.len() as f64;
 
         let dice = Uniform::new(-k, k);
 
@@ -74,6 +76,20 @@ impl Cycle {
 
         return (c_1, c_2)
     }
+
+    pub fn reversal(&self) -> Self {
+        let mut rng = rand::thread_rng();
+        let mut gene = self.clone();
+        let uniform = Uniform::new(0, TOTAL_CITIES);
+
+        let a = uniform.sample(&mut rng);
+        let b = uniform.sample(&mut rng);
+
+        gene.float_vec.swap(a, b);
+        gene.path = generate_path(&gene.float_vec);
+
+        return gene
+    }
 }
 
 impl GeneticCustom for Cycle {
@@ -85,6 +101,9 @@ impl GeneticCustom for Cycle {
         let mutated_child_1 = child_1.mutate(params.mutation_rate);
         let mutated_child_2 = child_2.mutate(params.mutation_rate);
 
-        return (mutated_child_1, mutated_child_2);
+        let ret_1 = mutated_child_1.reversal();
+        let ret_2 = mutated_child_2.reversal();
+
+        return (ret_1, ret_2);
     }
 }

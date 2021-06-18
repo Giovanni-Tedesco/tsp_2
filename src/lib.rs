@@ -2,6 +2,7 @@ pub mod cycle;
 pub mod ga;
 pub mod city;
 pub mod fitness;
+pub mod distributions;
 
 #[macro_use] extern crate maplit;
 
