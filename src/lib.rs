@@ -4,6 +4,9 @@ pub mod city;
 pub mod fitness;
 pub mod distributions;
 
+// Ant Colony Simulation
+pub mod antcolony;
+
 #[macro_use] extern crate maplit;
 
 

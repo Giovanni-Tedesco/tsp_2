@@ -1,3 +1,4 @@
+pub mod ga_parallel;
 // use std::collections::BTreeMap;
 use crate::city::City;
 use crate::city::TOTAL_CITIES;
@@ -15,6 +16,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 // use std::cmp::Ordering;
 
+use rayon::prelude::*;
 
 use rand::distributions::WeightedIndex;
 // use rand::Rng;
@@ -68,12 +70,18 @@ T: GeneticCustom + Eq + Hash
 
         // println!("{:?}", population);
 
-        let mut x: Vec<f64> = Vec::new();        
+        // let mut x= Vec::new();        
 
+
+        let y: Vec<f64> = population
+        .iter()
+        .map(|item| calc_fitness(item, fitness, cache, towns_map, &last_best))
+        .collect();
         
-        for item in &population {
-            x.push(calc_fitness(item, fitness, cache, towns_map, &last_best))
-        }
+        
+        // for item in &population {
+        //     x.push(calc_fitness(item, fitness, cache, towns_map, &last_best))
+        // }
 
         population.sort_by(|a, b| fitness::fitness(b, &towns_map)
         .partial_cmp(&fitness::fitness(a, &towns_map))
@@ -82,7 +90,7 @@ T: GeneticCustom + Eq + Hash
 
 
         // let dist = WeightedIndex::new(x).unwrap();
-        let dist = Annealed::new(&x);
+        let dist = Annealed::new(&y);
 
         // let std_weighted = StandardWeighted{
         //     distribution: None

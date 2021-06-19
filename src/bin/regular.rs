@@ -16,18 +16,11 @@ use std::rc::Rc;
 fn main() {
     println!("Hello World");
 
-    // let town_map = City::generate_cities(TOTAL_CITIES);
     let town_map = get_map();
-    // println!("Float vec: {:?}", x.float_vec);
-    // println!("Path vec: {:?}", x.path);
-
-    // x.mutate(0.5);
-    // println!("Float vec: {:?}", x.float_vec);
-    // println!("Path vec: {:?}", x.path);
 
     let params = AlgorithmParams {
-        rounds: 10000,
-        max_popuation: 500,
+        rounds: 1000,
+        max_popuation: 400,
         mutation_rate: 0.5,
         co_factor: 0.5,
         elitism: 100,
@@ -37,63 +30,16 @@ fn main() {
     let mut initial_population: Vec<Rc<Cycle>> = Vec::new();
     let fitness: Box<dyn Fn(&Cycle, &Map) -> f64> = Box::new(fitness::fitness);
     
-    // println!("{:?}", t.tour.len());
-    // println!("{:?}", t2.tour.len());
-
-    // let (x1, x2) = t.mutate_step(&t2, &params);
-
-    // println!("{:?}", x1);
-    // println!("{:?}", x1.tour.len());
-    // println!("{:?}", x2);
-    // println!("{:?}", x2.tour.len());
-
-
-    
-    // initial_population.push(
-    //     Rc::new(Tour::generate_random(&cities_map))
-    // );
-
-    // let x = WeightedIndex::new(
-    //     initial_population.into_iter().map(|item| tour::fitness::fitness(&item))
-    // );
-
-    // println!("{:?}", x);
-
     let mut x: Vec<Rc<Cycle>> = ga::genetic_algorithm::<Cycle>(&initial_population, &params, &fitness, &mut cache, &town_map);
 
     x.sort_by(|a, b| fitness::fitness(a, &town_map)
     .partial_cmp(&fitness::fitness(b, &town_map))
     .unwrap());
 
-        // let x = item.start.number;
-        println!("distance: {:?}, fitness: {:?}, cycle: {:?}"
-        , fitness::tot_dist(&x[x.len() - 1], &town_map)
-        , fitness::fitness(&x[x.len() - 1], &town_map)
-        , x[x.len() - 1].path);
-
-    // let x = town_map.get(&0).unwrap();
-    // let y = town_map.get(&1).unwrap();
-
-    // println!("{:?}", x.distance(y));
-    
-    // This is the solution cycle / the cycle that will give the shortest distance.
-    // Uncomment to calculate the shortest distance.
-    /* let temp_vec: Vec<f64> = Vec::new();
-    let mut something: Vec<usize> = vec![1,8,38,31,44,18,7,28,6,37,19,27,17,43,30,36,46,33,20,47,21,32,39,48,5,42,24,10,45,35,4,26,2,29,34,41,16,22,3,23,14,25,13,11,12,15,40,9];
-
-    for i in 0..something.len() {
-         something[i] -= 1;
-    }
-
-    let test = Cycle {
-         path: something,
-         float_vec: temp_vec,
-    };
-
-     println!("{:?}", fitness::tot_dist(&test, &town_map));
-     println!("{:?}", fitness::fitness(&test, &town_map));
-    */
-
+    println!("distance: {:?}, fitness: {:?}, cycle: {:?}"
+    , fitness::tot_dist(&x[x.len() - 1], &town_map)
+    , fitness::fitness(&x[x.len() - 1], &town_map)
+    , x[x.len() - 1].path);
 
 }
 
@@ -108,7 +54,7 @@ fn get_map() -> Map {
     6  => City{x:7573f64, y:3716f64},
     7  => City{x:7265f64, y:1268f64},
     8  => City{x:6898f64, y:1885f64},
-    9 => City{x:1112f64, y:2049f64},
+    9 =>  City{x:1112f64, y:2049f64},
     10 => City{x:5468f64, y:2606f64},
     11 => City{x:5989f64, y:2873f64},
     12 => City{x:4706f64, y:2674f64},

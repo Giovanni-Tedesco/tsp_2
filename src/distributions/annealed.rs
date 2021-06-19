@@ -64,7 +64,6 @@ pub fn annealed_selection(fitnesses: &Vec<f64>) -> usize {
         }
 
     }
-
     return 0;
 
 }
