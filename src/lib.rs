@@ -7,6 +7,9 @@ pub mod distributions;
 // Ant Colony Simulation
 pub mod antcolony;
 
+// Plotting
+pub mod plot;
+
 #[macro_use] extern crate maplit;
 
 

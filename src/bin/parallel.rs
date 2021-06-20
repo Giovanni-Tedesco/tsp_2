@@ -10,14 +10,15 @@ use tsp_2::*;
 use tsp_2::cycle::Cycle;
 use tsp_2::city::City;
 use tsp_2::city::TOTAL_CITIES;
+use tsp_2::plot::plot_graph;
 
 use std::rc::Rc;
 
 
 fn main() {
     let params = AlgorithmParams {
-        rounds: 1000,
-        max_popuation: 400,
+        rounds: 100,
+        max_popuation: 30,
         mutation_rate: 0.5,
         co_factor: 0.5,
         elitism: 100,
@@ -32,16 +33,17 @@ fn main() {
 
     // let mut x: Vec<Rc<Cycle>> = ga::genetic_algorithm::<Cycle>(&initial_population, &params, &fitness, &mut cache, &town_map);
 
-    y.sort_by(|a, b| fitness::fitness(a, &town_map)
-    .partial_cmp(&fitness::fitness(b, &town_map))
+    y.sort_by(|a, b| fitness::fitness(b, &town_map)
+    .partial_cmp(&fitness::fitness(a, &town_map))
     .unwrap());
 
     println!("distance: {:?}, fitness: {:?}, cycle: {:?}"
-        , fitness::tot_dist(&y[y.len() - 1], &town_map)
-        , fitness::fitness(&y[y.len() - 1], &town_map)
-        , y[y.len() - 1].path
+        , fitness::tot_dist(&y[0], &town_map)
+        , fitness::fitness(&y[0], &town_map)
+        , y[0].path
     );
 
+    plot_graph(&y[0], &town_map);
 
 }
 
