@@ -3,6 +3,7 @@ pub mod ga;
 pub mod city;
 pub mod fitness;
 pub mod distributions;
+pub mod utils;
 
 // Ant Colony Simulation
 pub mod antcolony;

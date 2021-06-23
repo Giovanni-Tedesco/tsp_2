@@ -33,7 +33,7 @@ pub fn fitness(cycle: &Cycle, town_map: &Map) -> f64 {
     if x.is_infinite() {
         return 0f64;
     } else {
-        return 1f64/total;
+        return 4f64/total;
     }
 }
 

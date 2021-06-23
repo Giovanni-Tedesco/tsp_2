@@ -1,6 +1,7 @@
 // use std::array::IntoIter;
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::iter::FromIterator;
+use std::env;
 
 use crate::city::Map;
 
@@ -16,17 +17,24 @@ use std::rc::Rc;
 
 
 fn main() {
+
+    let args: Vec<String> = env::args().collect();
+    
+    let filename = &args[1];
+
+    let town_map = utils::file_reader(filename);
+
     let params = AlgorithmParams {
-        rounds: 100,
-        max_popuation: 30,
-        mutation_rate: 0.5,
+        rounds: 5000,
+        max_popuation: 500,
+        mutation_rate: 0.2,
         co_factor: 0.5,
-        elitism: 100,
+        elitism: 250,
     };
 
     let initial_population2: Vec<Cycle> = Vec::new();
     let mut par_cache: HashMap<Cycle, f64> = HashMap::new();
-    let mut town_map = get_map();
+    // let mut town_map = get_map();
 
     let mut y = ga::ga_parallel::genetic_parallel(&initial_population2, &params, &mut par_cache, &town_map);
     
@@ -37,10 +45,11 @@ fn main() {
     .partial_cmp(&fitness::fitness(a, &town_map))
     .unwrap());
 
-    println!("distance: {:?}, fitness: {:?}, cycle: {:?}"
+    println!("distance: {:?}, fitness: {:?}, cycle: {:?}, floats: {:?}"
         , fitness::tot_dist(&y[0], &town_map)
         , fitness::fitness(&y[0], &town_map)
         , y[0].path
+        , y[0].float_vec
     );
 
     plot_graph(&y[0], &town_map);

@@ -9,12 +9,13 @@ pub fn plot_graph(cycle: &Cycle, town_map: &Map) {
 
     fg.axes2d().set_title("TSP Shortest Path", &[])
                 .lines(
-		&[-3., -2., -1., 0., 1., 2., 3.],
-		&[9., 4., 1., 0., 1., 4., 9.],
+		&x,
+		&y,
 		&[Caption("Path")],
 	);
 
-    fg.show().unwrap();
+    fg.show_and_keep_running().unwrap();
+
 
 }
 

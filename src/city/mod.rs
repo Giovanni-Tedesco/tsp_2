@@ -5,7 +5,8 @@ use rand::{distributions::{Uniform, uniform}, prelude::Distribution};
 
 pub type Map = HashMap<usize, City>;
 
-pub const TOTAL_CITIES: usize = 48;
+pub const TOTAL_CITIES: usize = 237;
+#[derive(Debug)]
 pub struct City {
     pub x: f64,
     pub y: f64

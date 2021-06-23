@@ -7,6 +7,7 @@ use crate::distributions::annealed::Annealed;
 use crate::fitness;
 use crate::city::TOTAL_CITIES;
 use crate::fitness::fitness;
+use crate::plot;
 
 use genetic::{AlgorithmParams, GeneticCustom};
 use genetic::abstractions::FitFunc;
@@ -40,10 +41,13 @@ pub fn genetic_parallel(
     , fitness::fitness(&population[0], &town_map)
     , population[0].path);
 
+    plot::plot_graph(&population[0], town_map);
+
     let mut last_best = population[0].clone();
 
+    let mut i = 0;
 
-    for _ in 0..params.rounds {
+    loop {
     
         let fitnesses = parallel_fitness(&population, town_map, &last_best, cache);
 
@@ -52,6 +56,13 @@ pub fn genetic_parallel(
         .unwrap());
 
         let dist = Annealed::new(&fitnesses);
+
+        println!("distance: {:?}, fitness: {:?}, cycle: {:?}"
+        , fitness::tot_dist(&population[0], &town_map)
+        , fitness::fitness(&population[0], &town_map)
+        , i);
+
+
 
 
 
@@ -65,6 +76,7 @@ pub fn genetic_parallel(
 
         last_best = population[0].clone();
 
+        // TODO: Can this be parallelized
         while new_population.len() < params.max_popuation as usize {
             let parent_1 = &population[dist.sample(&mut rng)];
             let parent_2 = &population[dist.sample(&mut rng)];
@@ -79,7 +91,10 @@ pub fn genetic_parallel(
             new_population.push(mutated_child_2);
         }
 
+        i += 1;
+
         population = new_population;
+
     }
 
     return population;
