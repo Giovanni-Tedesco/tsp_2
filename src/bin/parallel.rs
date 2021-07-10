@@ -24,7 +24,7 @@ fn main() {
 
     let town_map = utils::file_reader(filename);
 
-    let params = AlgorithmParams {
+    let mut params = AlgorithmParams {
         rounds: 5000,
         max_popuation: 500,
         mutation_rate: 0.2,
@@ -36,7 +36,7 @@ fn main() {
     let mut par_cache: HashMap<Cycle, f64> = HashMap::new();
     // let mut town_map = get_map();
 
-    let mut y = ga::ga_parallel::genetic_parallel(&initial_population2, &params, &mut par_cache, &town_map);
+    let mut y = ga::ga_parallel::genetic_parallel(&initial_population2, &mut params, &mut par_cache, &town_map);
     
 
     // let mut x: Vec<Rc<Cycle>> = ga::genetic_algorithm::<Cycle>(&initial_population, &params, &fitness, &mut cache, &town_map);

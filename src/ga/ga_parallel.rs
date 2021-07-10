@@ -21,7 +21,7 @@ pub type ParHash<T> = HashMap<T, f64>;
 
 pub fn genetic_parallel(
     initial_population: &CycleVec,
-    params: &AlgorithmParams,    
+    params: &mut AlgorithmParams,    
     cache: &mut ParHash<Cycle>,
     town_map: &Map
 ) -> Vec<Cycle> 
@@ -45,9 +45,9 @@ pub fn genetic_parallel(
 
     let mut last_best = population[0].clone();
 
-    let mut i = 0;
+    // let mut i = 0;
 
-    loop {
+    for i in 0..params.rounds {
     
         let fitnesses = parallel_fitness(&population, town_map, &last_best, cache);
 
@@ -64,12 +64,16 @@ pub fn genetic_parallel(
 
 
 
-
-
         let mut new_population: Vec<Cycle> = Vec::new();
 
-        let ins = params.elitism.min(population.len());
+        // This is done in an effor to avoid hitting a local-minima.
+        // How much it works is questionable.
+        if i % 1000 == 0 {
+            params.elitism /= 2
+        }
 
+        let ins = params.elitism.min(population.len());
+        
         for i in 0..ins {
             new_population.push(population[i].clone());
         }
@@ -91,7 +95,6 @@ pub fn genetic_parallel(
             new_population.push(mutated_child_2);
         }
 
-        i += 1;
 
         population = new_population;
 
